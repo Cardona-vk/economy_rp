@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Economy RP - Mesa de Comercio</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body data-user-id="{{ player_id }}">
+    <div class="tablet-container">
+        <div class="camera-dot"></div>
+        <div class="tablet-screen">
+            <nav class="nav-bar">
+                <h2 class="font-rajdhani" style="color: var(--accent-neon); text-align: center; margin-bottom: 2rem;">TRADE OS</h2>
+                <div class="nav-links">
+                    <a href="{{ url_for('dashboard') }}">📊 Dashboard</a>
+                    <a href="{{ url_for('trade') }}" class="active">🤝 Comercio</a>
+                    <a href="{{ url_for('history') }}">📜 Historial</a>
+                    <a href="{{ url_for('admin') }}">⚙️ Admin</a>
+                    <a href="{{ url_for('logout') }}" style="color: var(--error-color);">🚪 Salir</a>
+                </div>
+            </nav>
+
+            <main class="page-content" style="display: flex; gap: 20px; justify-content: center; align-items: flex-start; padding: 20px;">
+                <!-- Columna Izquierda: Invitación y Mesa Activa -->
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 20px;">
+                    <!-- Panel de Invitación -->
+                    <section id="negotiation-panel" class="stat-panel neon-border-purple" style="text-align: center;">
+                        <h2 class="font-rajdhani" style="color: var(--accent-neon); margin-bottom: 15px;">Nueva Negociación</h2>
+                        <p style="color: var(--text-muted); margin-bottom: 20px;">Ingresa el ID del jugador y tu oferta para iniciar un comercio.</p>
+
+                        <div class="form-group" style="display: flex; flex-direction: column; gap: 15px; align-items: center;">
+                            <input type="number" id="target-player-id" placeholder="ID Jugador Destino" style="width: 300px;">
+
+                            <div style="display: flex; gap: 10px; width: 100%; justify-content: center;">
+                                <select id="my_item_id" style="width: 140px;">
+                                    <option value="">-- Seleccionar Item --</option>
+                                    {% for item in inventario %}
+                                        <option value="{{ item.id_item }}">{{ item.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                                <input type="number" id="my_money" placeholder="Monto dinero ($)" style="width: 140px;">
+                            </div>
+
+                            <button id="btn-invite" class="btn" style="width: auto; padding: 10px 30px;" onclick="sendTradeInvite()">Invitar</button>
+                        </div>
+                    </section>
+
+                    <!-- Mesa de Intercambio Activa (Oculta por defecto) -->
+                    <section id="active-trade-panel" class="stat-panel neon-border-cyan" style="display: none; text-align: center;">
+                        <h2 class="font-rajdhani" style="color: var(--accent-blue); margin-bottom: 15px;">SALA DE TRADEO ACTIVA</h2>
+
+                        <div style="display: flex; justify-content: space-around; align-items: flex-start; gap: 20px; margin-bottom: 20px;">
+                            <!-- Panel IZQUIERDA: Tu Oferta -->
+                            <div class="stat-panel" style="flex: 1; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 10px; border: 1px solid var(--accent-neon);">
+                                <h3 style="font-size: 1.1rem; color: var(--accent-neon); margin-bottom: 15px;">Tu Oferta</h3>
+                                <div class="form-group" style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
+                                    <select id="trade-item-select" style="width: 100%;">
+                                        <option value="">-- Seleccionar Item --</option>
+                                        {% for item in inventario %}
+                                            <option value="{{ item.id_item }}">{{ item.nombre }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <input type="number" id="trade-money-input" placeholder="Monto $" style="width: 100%;">
+                                    <button class="btn" style="width: 100%; background-color: var(--accent-blue);" onclick="updateTradeOffer()">ACTUALIZAR OFERTA</button>
+                                    <button class="btn" style="width: 100%; background-color: var(--accent-neon);" onclick="confirmTrade()">CONFIRMAR MI OFERTA</button>
+                                </div>
+                                <div id="my-status-badge" style="margin-top: 15px; font-weight: bold; color: var(--text-muted);">⏳ Esperando</div>
+                            </div>
+
+                            <div class="font-rajdhani" style="font-size: 2rem; color: var(--accent-blue); align-self: center;">VS</div>
+
+                            <!-- Panel DERECHA: Oferta del Otro -->
+                            <div class="stat-panel" style="flex: 1; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 10px; border: 1px solid var(--accent-blue);">
+                                <h3 style="font-size: 1.1rem; color: var(--accent-blue); margin-bottom: 15px;">Oferta del Otro</h3>
+                                <div style="text-align: center; margin-bottom: 20px;">
+                                    <p id="other-item-display" style="font-weight: bold; color: var(--accent-neon); font-size: 1.2rem;">---</p>
+                                    <p id="other-money-display" style="font-size: 1.1rem; color: white;">$ 0</p>
+                                </div>
+                                <div id="other-status-badge" style="text-align: center; font-weight: bold; color: var(--text-muted);">⏳ Esperando</div>
+                            </div>
+                        </div>
+                        <button class="btn" style="width: auto; padding: 10px 20px; background-color: var(--error-color);" onclick="cancelCurrentTrade()">Cancelar Negociación</button>
+                    </section>
+                </div>
+
+                <!-- Columna Derecha: Notificaciones de Tradeos -->
+                <div style="flex: 1; max-width: 400px;">
+                    <section id="panel-notificaciones" class="stat-panel neon-border-blue" style="text-align: center;">
+                        <h2 class="font-rajdhani" style="color: var(--accent-blue); margin-bottom: 15px;">Invitaciones Recibidas</h2>
+                        <div id="trades-pending-list" style="display: flex; flex-direction: column; gap: 10px;">
+                            <p style="color: var(--text-muted);">No hay invitaciones pendientes.</p>
+                        </div>
+                    </section>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

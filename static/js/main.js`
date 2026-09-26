@@ -1,0 +1,110 @@
+async function updateDashboard() {
+    try {
+        const response = await fetch('/api/dashboard');
+        const data = await response.json();
+
+        if (data.error) {
+            console.error("Error dashboard:", data.error);
+            return;
+        }
+
+        // Actualizar Saldo
+        const saldoEl = document.getElementById('saldo-display');
+        if (saldoEl) {
+            saldoEl.innerText = `$ ${data.saldo.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        }
+
+        // Actualizar Inventario
+        const invListEl = document.getElementById('inventory-list');
+        if (invListEl) {
+            invListEl.innerHTML = '';
+            data.inventario.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.nombre}</td>
+                    <td>$ ${item.precio}</td>
+                    <td>${item.tiene_deuda ? '<span class="debt-badge">DEUDA</span>' : '<span style="color: var(--accent-neon)">OK</span>'}</td>
+                `;
+                invListEl.appendChild(row);
+            });
+        }
+    } catch (e) {
+        console.error("Error fetching dashboard:", e);
+    }
+}
+
+async function populateItemSelect() {
+    try {
+        const response = await fetch('/api/dashboard');
+        const data = await response.json();
+
+        const select = document.getElementById('item_id_select');
+        if (!select) return;
+
+        select.innerHTML = '<option value="">-- Selecciona un ítem de tu inventario --</option>';
+
+        if (data.inventario && data.inventario.length > 0) {
+            data.inventario.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.id_item;
+                option.innerText = `${item.nombre} ($${item.precio})`;
+                select.appendChild(option);
+            });
+        } else {
+            console.log("No hay ítems disponibles en el inventario.");
+        }
+    } catch (e) {
+        console.error("Error populating item select:", e);
+    }
+}
+
+async function updatePendingTrades() {
+    try {
+        const response = await fetch('/api/trades/pending');
+        const trades = await response.json();
+
+        const listEl = document.getElementById('pending-trades-list');
+        if (!listEl) return;
+
+        listEl.innerHTML = '';
+        if (trades.length === 0) {
+            listEl.innerHTML = '<p style="color: var(--text-muted); text-align: center;">No hay negociaciones pendientes.</p>';
+            return;
+        }
+
+        trades.forEach(t => {
+            const card = document.createElement('div');
+            card.className = 'trade-item-card';
+            card.innerHTML = `
+                <div>
+                    <h4>Negociación #${t.id_negociacion}</h4>
+                    <p style="font-size: 0.8rem; color: var(--text-muted);">
+                        Ofrece: $${t.monto_j1} | Recibe: $${t.monto_j2}
+                    </p>
+                </div>
+                <div>
+                    <button class="btn-confirm" onclick="confirmTrade(${t.id_negociacion})">Confirmar</button>
+                </div>
+            `;
+            listEl.appendChild(card);
+        });
+    } catch (e) {
+        console.error("Error fetching trades:", e);
+    }
+}
+
+async function confirmTrade(id) {
+    try {
+        const response = await fetch('/api/trades/confirm', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ id_negociacion: id })
+        });
+        const result = await response.json();
+        alert(result.message);
+        updatePendingTrades();
+        updateDashboard();
+    } catch (e) {
+        alert("Error al confirmar tradeo");
+    }
+}

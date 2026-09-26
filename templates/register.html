@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Economy RP - Registro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="tablet-container">
+        <div class="camera-dot"></div>
+        <div class="tablet-screen">
+            <main class="page-content" style="display: flex; justify-content: center; align-items: center; height: 100%;">
+                <div class="stat-panel neon-border-purple" style="max-width: 400px; text-align: center;">
+                    <h1 class="font-rajdhani" style="color: var(--accent-neon); text-transform: uppercase; letter-spacing: 2px;">Crear Cuenta</h1>
+
+                    {% if message %}
+                    <div class="message" style="color: var(--error-color); margin-bottom: 1rem;">{{ message }}</div>
+                    {% endif %}
+
+                    <form method="POST">
+                        <div class="form-group">
+                            <label>Nombre de Usuario</label>
+                            <input type="text" name="usuario" required autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label>Correo Electrónico</label>
+                            <input type="email" name="correo" required autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label>Contraseña</label>
+                            <input type="password" name="password" required>
+                        </div>
+                        <button type="submit" class="btn">Registrarse</button>
+                    </form>
+
+                    <div class="footer-links" style="margin-top: 20px; color: var(--text-muted); font-size: 0.9rem;">
+                        ¿Ya tienes cuenta? <a href="{{ url_for('login') }}" style="color: var(--accent-blue); text-decoration: none;">Inicia sesión aquí</a>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Economy RP - Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="tablet-container">
+        <div class="camera-dot"></div>
+        <div class="tablet-screen">
+            <nav class="nav-bar">
+                <h2 class="font-rajdhani" style="color: var(--accent-neon); text-align: center; margin-bottom: 2rem;">ECONOMY HUD</h2>
+                <div class="nav-links">
+                    <a href="{{ url_for('dashboard') }}" class="active">📊 Dashboard</a>
+                    <a href="{{ url_for('trade') }}">🤝 Comercio</a>
+                    <a href="{{ url_for('history') }}">📜 Historial</a>
+                    <a href="{{ url_for('admin') }}">⚙️ Admin</a>
+                    <a href="{{ url_for('logout') }}" style="color: var(--error-color);">🚪 Salir</a>
+                </div>
+            </nav>
+
+            <main class="page-content">
+                <div style="display: grid; grid-template-columns: 300px 1fr; gap: 30px;">
+                    <div class="stat-panel neon-border-cyan">
+                        <div style="color: var(--text-muted); text-transform: uppercase; font-size: 0.8rem;">Saldo Disponible</div>
+                        <div id="saldo-display" style="font-size: 2.5rem; color: var(--accent-neon); font-weight: bold; margin: 10px 0;">$ 0.00</div>
+                        <div style="color: var(--accent-blue); font-weight: bold; font-size: 1.1rem; margin-top: 10px;">ID: #{{ player_id }}</div>
+                    </div>
+
+                    <div class="stat-panel neon-border-emerald">
+                        <h3 class="font-rajdhani" style="color: var(--accent-blue); margin-top: 0; text-transform: uppercase;">Inventario de Bienes</h3>
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                            <thead>
+                                <tr style="text-align: left; color: var(--accent-blue); text-transform: uppercase; font-size: 0.8rem; border-bottom: 1px solid var(--border-color);">
+                                    <th style="padding: 12px;">Ítem</th>
+                                    <th style="padding: 12px;">Precio</th>
+                                    <th style="padding: 12px;">Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventory-list">
+                                <!-- Cargado por AJAX -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

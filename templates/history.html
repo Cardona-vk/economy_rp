@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Economy RP - Historial</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="tablet-container">
+        <div class="camera-dot"></div>
+        <div class="tablet-screen">
+            <nav class="nav-bar">
+                <h2 class="font-rajdhani" style="color: var(--accent-neon); text-align: center; margin-bottom: 2rem;">TRADE OS</h2>
+                <div class="nav-links">
+                    <a href="{{ url_for('dashboard') }}">📊 Dashboard</a>
+                    <a href="{{ url_for('trade') }}">🤝 Comercio</a>
+                    <a href="{{ url_for('history') }}" class="active">📜 Historial</a>
+                    <a href="{{ url_for('admin') }}">⚙️ Admin</a>
+                    <a href="{{ url_for('logout') }}" style="color: var(--error-color);">🚪 Salir</a>
+                </div>
+            </nav>
+
+            <main class="page-content">
+                <div class="stat-panel neon-border-cyan">
+                    <h2 class="font-rajdhani" style="color: var(--accent-blue); text-transform: uppercase; margin-top: 0;">Historial de Transacciones</h2>
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                        <thead>
+                            <tr style="text-align: left; color: var(--accent-blue); text-transform: uppercase; font-size: 0.8rem; border-bottom: 1px solid var(--border-color);">
+                                <th style="padding: 12px;">Fecha</th>
+                                <th style="padding: 12px;">Tipo</th>
+                                <th style="padding: 12px;">Monto</th>
+                                <th style="padding: 12px;">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-list">
+                            <!-- Cargado por AJAX -->
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

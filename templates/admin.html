@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Economy RP - Panel Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="tablet-container">
+        <div class="camera-dot"></div>
+        <div class="tablet-screen">
+            <nav class="nav-bar">
+                <h2 class="font-rajdhani" style="color: var(--accent-neon); text-align: center; margin-bottom: 2rem;">TRADE OS</h2>
+                <div class="nav-links">
+                    <a href="{{ url_for('dashboard') }}">📊 Dashboard</a>
+                    <a href="{{ url_for('trade') }}">🤝 Comercio</a>
+                    <a href="{{ url_for('history') }}">📜 Historial</a>
+                    <a href="{{ url_for('admin') }}" class="active">⚙️ Admin</a>
+                    <a href="{{ url_for('logout') }}" style="color: var(--error-color);">🚪 Salir</a>
+                </div>
+            </nav>
+
+            <main class="page-content">
+                <div class="stat-panel neon-border-purple" style="max-width: 600px; margin: 0 auto;">
+                    <h2 class="font-rajdhani" style="text-align: center; color: var(--accent-blue); margin-bottom: 1.5rem; text-transform: uppercase;">Configuración Global</h2>
+
+                    <div class="form-group">
+                        <label>Porcentaje de Comisión (%)</label>
+                        <input type="number" id="porcentaje_comision" step="0.01" value="5" placeholder="Ej: 5">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Límite de Bienes por Jugador</label>
+                        <input type="number" id="limite_bienes_por_jugador" value="10" placeholder="Ej: 10">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tiempo de Enfriamiento (Minutos)</label>
+                        <input type="number" id="tiempo_enfriamiento_min" value="15" placeholder="Ej: 15">
+                    </div>
+
+                    <button id="save-config" class="btn">Guardar Cambios</button>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
