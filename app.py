@@ -88,7 +88,21 @@ def trade():
         player_id=user_id,
         inventario=inventario or []
     )
+@app.route('/api/dashboard')
+@login_required
+def api_dashboard():
+    user_id = session.get('user_id')
+    if isinstance(user_id, dict):
+        user_id = user_id.get('id_usuario') or user_id.get('id_jugador')
 
+    saldo, msg_saldo = database.consultar_saldo(user_id)
+    inv, msg_inv = database.consultar_inventario(user_id)
+
+    return jsonify({
+        "saldo": saldo,
+        "inventario": inv or [],
+        "error": None if saldo is not None else msg_saldo
+    })
 @app.route('/api/trades/open', methods=['POST'])
 @login_required
 def api_open_trade():
